@@ -11,6 +11,7 @@ to setup
   setup-patches
   setup-turtles
   reset-ticks
+  user-message "The field is set-up"
 end
 
 
@@ -28,7 +29,7 @@ to setup-turtles
   create-robots 1    [set color grey                         ;; there is only one robot needed, which is twice the size of the other agents
                       set size robot-size
                       set damage initial-damage
-                      setxy -16 20                          ;; the robot starts at a point in the left top corner a bit from the sides
+                      setxy x-start y-start                         ;; the robot starts at a point in the left top corner a bit from the sides
                       set energy initial-energy              ;; the initial energy is not enough to reach the goal and set by a slider
                       ]
   create-friends number-of-friends  [set color yellow            ;; friends are yellow and distributed randomly, the amount is set by the slider
@@ -44,7 +45,7 @@ to setup-patches
   ask patches [set pcolor black]                                  ;; general patches are black
   ask n-of number-of-obstacles patches [set pcolor red]               ;; slider sets amount of obstacles randomly distributed with red color
   ask n-of number-of-power-stations patches [set pcolor green]         ;; slider sets amount of power stations randomly distributed with green color
-  ask patch 0 0  [set pcolor white]                               ;; create a target with a white color
+  ask patch x-goal y-goal  [set pcolor white]                               ;; create a target with a white color
 end
 
 to move-turtles
@@ -138,7 +139,7 @@ NIL
 SLIDER
 20
 87
-192
+151
 120
 number-of-enemies
 number-of-enemies
@@ -151,10 +152,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-19
-126
-191
-159
+157
+88
+279
+121
 number-of-friends
 number-of-friends
 0
@@ -166,10 +167,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-18
-170
-192
-203
+21
+129
+152
+162
 number-of-power-stations
 number-of-power-stations
 0
@@ -181,25 +182,25 @@ NIL
 HORIZONTAL
 
 SLIDER
-19
-212
-191
-245
+158
+132
+278
+165
 number-of-obstacles
 number-of-obstacles
 0
 80
-0.0
+31.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-26
-277
-198
-310
+21
+188
+151
+221
 initial-energy
 initial-energy
 0
@@ -211,10 +212,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-25
-323
-197
-356
+161
+186
+281
+219
 initial-damage
 initial-damage
 0
@@ -226,10 +227,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-32
-366
-204
-399
+20
+233
+151
+266
 maximum-damage
 maximum-damage
 0
@@ -241,19 +242,63 @@ NIL
 HORIZONTAL
 
 SLIDER
-31
-416
-203
-449
+159
+235
+281
+268
 robot-size
 robot-size
-1
+2
 15
-1.0
+5.0
 1
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+19
+309
+151
+369
+x-start
+-20.0
+1
+0
+Number
+
+INPUTBOX
+160
+310
+282
+370
+y-start
+-20.0
+1
+0
+Number
+
+INPUTBOX
+21
+386
+152
+446
+x-goal
+20.0
+1
+0
+Number
+
+INPUTBOX
+162
+385
+282
+445
+y-goal
+20.0
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
