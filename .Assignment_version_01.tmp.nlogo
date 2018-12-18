@@ -28,7 +28,7 @@ to setup-turtles
   create-robots 1    [set color grey                         ;; there is only one robot needed, which is twice the size of the other agents
                       set size robot-size
                       set damage initial-damage
-                      setxy -16 20                          ;; the robot starts at a point in the left top corner a bit from the sides
+                      setxy x-start y-start                         ;; the robot starts at a point in the left top corner a bit from the sides
                       set energy initial-energy              ;; the initial energy is not enough to reach the goal and set by a slider
                       ]
   create-friends number-of-friends  [set color yellow            ;; friends are yellow and distributed randomly, the amount is set by the slider
@@ -44,7 +44,7 @@ to setup-patches
   ask patches [set pcolor black]                                  ;; general patches are black
   ask n-of number-of-obstacles patches [set pcolor red]               ;; slider sets amount of obstacles randomly distributed with red color
   ask n-of number-of-power-stations patches [set pcolor green]         ;; slider sets amount of power stations randomly distributed with green color
-  ask patch 0 0  [set pcolor white]                               ;; create a target with a white color
+  ask patch x-goal y-goal  [set pcolor white]                               ;; create a target with a white color
 end
 
 to move-turtles
@@ -189,7 +189,7 @@ number-of-obstacles
 number-of-obstacles
 0
 80
-0.0
+31.0
 1
 1
 NIL
@@ -243,17 +243,61 @@ HORIZONTAL
 SLIDER
 159
 235
-331
+281
 268
 robot-size
 robot-size
-1
+2
 15
-1.0
+5.0
 1
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+19
+309
+151
+369
+x-start
+0.0
+1
+0
+Number
+
+INPUTBOX
+160
+310
+282
+370
+y-start
+0.0
+1
+0
+Number
+
+INPUTBOX
+21
+386
+152
+446
+x-goal
+0.0
+1
+0
+Number
+
+INPUTBOX
+162
+385
+282
+445
+y-goal
+0.0
+1
+0
+Number
 
 @#$#@#$#@
 ## WHAT IS IT?
