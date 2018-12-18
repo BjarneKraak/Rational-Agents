@@ -138,7 +138,7 @@ NIL
 SLIDER
 20
 87
-192
+151
 120
 number-of-enemies
 number-of-enemies
@@ -151,10 +151,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-19
-126
-191
-159
+157
+88
+279
+121
 number-of-friends
 number-of-friends
 0
@@ -166,10 +166,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-18
-170
-192
-203
+21
+129
+152
+162
 number-of-power-stations
 number-of-power-stations
 0
@@ -181,10 +181,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-19
-212
-191
-245
+158
+132
+278
+165
 number-of-obstacles
 number-of-obstacles
 0
@@ -196,10 +196,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
-277
-198
-310
+21
+188
+151
+221
 initial-energy
 initial-energy
 0
@@ -211,10 +211,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-25
-323
-197
-356
+161
+186
+281
+219
 initial-damage
 initial-damage
 0
@@ -226,10 +226,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-32
-366
-204
-399
+20
+233
+151
+266
 maximum-damage
 maximum-damage
 0
@@ -241,10 +241,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-31
-416
-203
-449
+159
+235
+331
+268
 robot-size
 robot-size
 1
