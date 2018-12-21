@@ -17,9 +17,12 @@ end
 
 to go
   move-turtles
-  tick
-  ;lose-energy
+  lose-energy
   meet-enemies
+  meet-friends
+  check-for-power-stations
+  check-for-goal
+  tick
 
 end
 
@@ -57,6 +60,24 @@ to move-turtles
   move-robots
 end
 
+to check-for-power-stations
+  ask robots[
+    if pcolor = green [
+      set energy energy + 50
+      ;show "add fuel"
+    ]
+  ]
+end
+
+to check-for-goal
+  ask robots[
+    if pcolor = white [
+      user-message "robot arrived at goal"
+      stop
+    ]
+  ]
+end
+
 to lose-energy
   ask robots [
     set energy energy - 1; robots lose energy
@@ -72,7 +93,7 @@ to meet-enemies
     let person one-of enemies-here
     if person != nobody [
       ;show person
-      set damage damage + 1; meeting enemies hurts you
+      set damage damage + 5; meeting enemies hurts you
       if damage > maximum-damage - 1[
         user-message "Robot died";
         stop
@@ -86,7 +107,7 @@ to meet-friends
     let person one-of friends-here
     if person != nobody [
       ;show person
-      set damage damage - 1; meeting friends helps you recover
+      set damage damage - 5; meeting friends helps you recover
     ]
   ]
 end
@@ -108,7 +129,7 @@ end
 to move-robots
   ask robots [
     right random 360                        ;; friends move in a random direction 1 step forward
-    forward 1
+    forward 2
   ]
 
 end
@@ -116,8 +137,8 @@ end
 GRAPHICS-WINDOW
 305
 10
-772
-478
+884
+590
 -1
 -1
 11.2
@@ -130,10 +151,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--20
-20
--20
-20
+-25
+25
+-25
+25
 1
 1
 1
@@ -183,7 +204,7 @@ number-of-enemies
 number-of-enemies
 0
 50
-16.0
+25.0
 1
 1
 NIL
@@ -198,7 +219,7 @@ number-of-friends
 number-of-friends
 0
 50
-19.0
+50.0
 1
 1
 NIL
@@ -212,8 +233,8 @@ SLIDER
 number-of-power-stations
 number-of-power-stations
 0
-50
-36.0
+100
+100.0
 1
 1
 NIL
@@ -242,8 +263,8 @@ SLIDER
 initial-energy
 initial-energy
 0
-80
-48.0
+200
+200.0
 1
 1
 NIL
@@ -258,7 +279,7 @@ initial-damage
 initial-damage
 0
 100
-0.0
+48.0
 1
 1
 NIL
@@ -273,7 +294,7 @@ maximum-damage
 maximum-damage
 0
 100
-41.0
+100.0
 1
 1
 NIL
@@ -295,10 +316,10 @@ NIL
 HORIZONTAL
 
 INPUTBOX
-19
-309
-151
-369
+21
+275
+81
+335
 x-start
 -20.0
 1
@@ -306,10 +327,10 @@ x-start
 Number
 
 INPUTBOX
-160
-310
-282
-370
+84
+276
+149
+336
 y-start
 -20.0
 1
@@ -317,10 +338,10 @@ y-start
 Number
 
 INPUTBOX
-21
-386
-152
-446
+156
+277
+219
+337
 x-goal
 20.0
 1
@@ -328,10 +349,10 @@ x-goal
 Number
 
 INPUTBOX
-162
-385
+224
+277
 282
-445
+337
 y-goal
 20.0
 1
@@ -339,13 +360,13 @@ y-goal
 Number
 
 PLOT
-21
-450
-221
-600
-plot 1
-NIL
-NIL
+22
+348
+280
+468
+Damage
+Time
+Damage
 0.0
 10.0
 0.0
@@ -354,7 +375,26 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot ask robots [damage]"
+"Damage" 1.0 0 -16777216 true "" "ask robots [ plot damage ]"
+"Maximum" 1.0 0 -7500403 true "" "plot maximum-damage"
+
+PLOT
+21
+472
+281
+592
+Energy
+Time
+Energy
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"Energy" 1.0 0 -2674135 true "" "ask robots [plot energy]"
 
 @#$#@#$#@
 ## WHAT IS IT?
