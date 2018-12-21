@@ -87,8 +87,7 @@ to meet-friends
     if person != nobody [
       ;show person
       set damage damage - 1; meeting friends helps you recover
-    ]
-  ]
+
 end
 
 to move-enemies
@@ -273,7 +272,7 @@ maximum-damage
 maximum-damage
 0
 100
-41.0
+1.0
 1
 1
 NIL
