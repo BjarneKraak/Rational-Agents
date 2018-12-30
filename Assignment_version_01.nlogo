@@ -22,6 +22,7 @@ to go
   meet-friends
   check-for-power-stations
   check-for-goal
+  check-death
   tick
 
 end
@@ -81,12 +82,22 @@ end
 to lose-energy
   ask robots [
     set energy energy - 1; robots lose energy
-    if energy < 1[
+    if energy <=  1 [
       user-message "Robot has no energy left";
-      stop
+      die
     ]
   ]
 end
+
+to check-death
+  ask robots [
+    if damage >= maximum-damage [
+      user-message "Robot destroyed"
+      die
+     ]
+  ]
+end
+
 
 to meet-enemies
   ask robots[
@@ -94,10 +105,6 @@ to meet-enemies
     if person != nobody [ ;if theres at least one enemy
       ;show person
       set damage damage + loss-from-enemies; meeting enemies hurts you
-      if damage > maximum-damage - 1[
-        user-message "Robot died";
-        stop
-      ]
     ]
   ]
 end
@@ -294,7 +301,7 @@ maximum-damage
 maximum-damage
 0
 100
-100.0
+78.0
 1
 1
 NIL
@@ -405,7 +412,7 @@ gain-from-power-station
 gain-from-power-station
 1
 40
-15.0
+23.0
 1
 1
 NIL
@@ -420,7 +427,7 @@ gain-from-friends
 gain-from-friends
 1
 20
-5.0
+1.0
 1
 1
 NIL
@@ -435,7 +442,7 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-5.0
+20.0
 1
 1
 NIL
