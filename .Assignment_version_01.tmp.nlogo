@@ -91,7 +91,7 @@ end
 to meet-enemies
   ask robots[
     let person one-of enemies-here
-    if person != nobody [ ;if theres at least one enemy
+    if person != nobody [
       ;show person
       set damage damage + loss-from-enemies; meeting enemies hurts you
       if damage > maximum-damage - 1[
@@ -105,7 +105,7 @@ end
 to meet-friends
   ask robots[
     let person one-of friends-here
-    if person != nobody [ ; if there's at least one friend
+    if person != nobody [
       ;show person
       set damage damage - gain-from-friends; meeting friends helps you recover
     ]
