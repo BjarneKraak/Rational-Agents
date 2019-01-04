@@ -4,9 +4,9 @@ breed [friends friend]
 
 robots-own [damage               ;; robot gets a degree of damage and a level of energy
             energy
-            orientation
-            xcor-goal
-            ycor-goal
+            orientation   ;orientation of robot: 0 is up, 90 if right etc
+            xcor-goal ;x cor of goal, which can be the real goal or a power station
+            ycor-goal ;y cor of goal, which can be the real goal or a power station
            ]
 
 to setup
@@ -14,13 +14,12 @@ to setup
   setup-patches
   setup-turtles
   reset-ticks
-  ;user-message "The field is set-up" ;;message is annoying
+  user-message "The field is set-up" ;message is annoying
 end
 
 
 to go
   move-turtles
-  lose-energy
   meet-enemies
   meet-friends
   check-for-power-stations
@@ -89,10 +88,7 @@ end
 to lose-energy
   ask robots [
     set energy energy - 2; robots lose energy
-    if energy <=  0 [
-      user-message "Robot has no energy left";
-      die
-    ]
+
   ]
 end
 
@@ -135,8 +131,8 @@ to move-enemies
     let temp one-of [1 2 3]
     forward temp
     if pcolor = red
-    [ ;if moved on top of obstacle
-      ;right 180 ;turn 180 degrees
+    [ ;if moved on top of obstacle, move back
+      right 180 ;turn 180 degrees
       forward temp ; go back
       right 180 ; turn to normal pos
     ]
@@ -148,7 +144,7 @@ to move-friends
   ask friends [
     right random 360                        ;; friends move in a random direction 1 step forward
     forward 1
-    if pcolor = red [ ;if moved on top of obstacle
+    if pcolor = red [ ;if moved on top of obstacle, move back
       right 180 ;turn 180 degrees
       forward 1 ; go back
       right 180 ; turn to normal pos
@@ -161,19 +157,19 @@ to move-robots
   ask robots [
     ifelse pcolor = green and energy < 100
     [ ]; wait and get fueled
-    [move-to-goal]
+    [move-to-goal] ; otherwise move to goal
   ]
 
 end
 
 to set-goal
-  ifelse energy > 75
+  ifelse energy > 50
   [
     set xcor-goal  x-goal
     set ycor-goal  y-goal
   ]
   [
-    ask patches at-points [[1 0] [0 1] [-1 0] [0 -1] [1 1] [-1 -1] [1 -1] [-1 1] ] with [pcolor = green] ;find powerstations around the robot
+    ask patches in-radius 3 with [pcolor = green] ;find powerstations around the robot ;at-points [[1 0] [0 1] [-1 0] [0 -1] [1 1] [-1 -1] [1 -1] [-1 1] ]
    [
     let m1 pxcor
     let m2 pycor
@@ -191,6 +187,7 @@ to move-to-goal
 
   move-and-find-orientation ; move 1 forward and find orientation
   avoid-obstacles ;avoid obstacles:
+  lose-energy
 
   let dif-x2 xcor-goal - xcor
   let dif-y2 ycor-goal - ycor
@@ -299,7 +296,7 @@ number-of-enemies
 number-of-enemies
 0
 150
-150.0
+50.0
 1
 1
 NIL
@@ -314,7 +311,7 @@ number-of-friends
 number-of-friends
 0
 150
-14.0
+50.0
 1
 1
 NIL
@@ -329,7 +326,7 @@ number-of-power-stations
 number-of-power-stations
 0
 100
-67.0
+60.0
 1
 1
 NIL
@@ -343,8 +340,8 @@ SLIDER
 number-of-obstacles
 number-of-obstacles
 0
-80
-80.0
+150
+120.0
 1
 1
 NIL
@@ -359,7 +356,7 @@ initial-energy
 initial-energy
 0
 100
-78.0
+40.0
 1
 1
 NIL
@@ -388,8 +385,8 @@ SLIDER
 maximum-damage
 maximum-damage
 0
-100
-100.0
+50
+20.0
 1
 1
 NIL
@@ -416,7 +413,7 @@ INPUTBOX
 349
 107
 x-start
-15.0
+20.0
 1
 0
 Number
@@ -427,7 +424,7 @@ INPUTBOX
 354
 178
 y-start
-15.0
+20.0
 1
 0
 Number
@@ -449,7 +446,7 @@ INPUTBOX
 350
 329
 y-goal
--13.0
+-20.0
 1
 0
 Number
@@ -500,7 +497,7 @@ gain-from-power-station
 gain-from-power-station
 1
 40
-12.0
+40.0
 1
 1
 NIL
@@ -530,7 +527,7 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-18.0
+1.0
 1
 1
 NIL
