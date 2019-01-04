@@ -148,6 +148,10 @@ to move-robots
     let dif-x new-x - last-x
     let dif-y new-y - last-y
     if dif-x > 0 [set orientation atan dif-x dif-y ]
+
+    ;avoid obstacles:
+    avoid-obstacles
+
     let dif-x2 x-goal - xcor
     let dif-y2 y-goal - ycor
     let angle atan dif-x2 dif-y2
@@ -164,6 +168,17 @@ to rotate-to-orientation [wanted-orientation]
     set orientation wanted-orientation
   ]
 end
+
+to avoid-obstacles
+  if pcolor = red [ ;if moved on top of obstacle
+    right 180 ;turn 180 degrees
+    forward 1 ; go back
+    right 180 ; turn to normal pos
+    right 90 ; turn to right
+    forward 1
+    left 90
+    avoid-obstacles
+    ]
 @#$#@#$#@
 GRAPHICS-WINDOW
 482
@@ -280,7 +295,7 @@ number-of-obstacles
 number-of-obstacles
 0
 80
-32.0
+80.0
 1
 1
 NIL
@@ -325,7 +340,7 @@ maximum-damage
 maximum-damage
 0
 100
-78.0
+100.0
 1
 1
 NIL
@@ -436,7 +451,7 @@ gain-from-power-station
 gain-from-power-station
 1
 40
-23.0
+29.0
 1
 1
 NIL
@@ -466,7 +481,7 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-20.0
+8.0
 1
 1
 NIL
