@@ -185,7 +185,7 @@ to move-to-goal
 end
 
 to set-goal
-  ifelse energy > 50 ;if energy level is higher than 50
+  ifelse energy > threshold-energy-search ;if energy level is higher than threshold set by user
   [;goal is real goal
     set xcor-goal  x-goal
     set ycor-goal  y-goal
@@ -421,10 +421,10 @@ NIL
 HORIZONTAL
 
 INPUTBOX
-289
+292
 47
-349
-107
+352
+117
 x-start
 20.0
 1
@@ -432,10 +432,10 @@ x-start
 Number
 
 INPUTBOX
-289
-118
-354
-178
+293
+125
+351
+188
 y-start
 20.0
 1
@@ -443,10 +443,10 @@ y-start
 Number
 
 INPUTBOX
-290
-192
-353
-252
+293
+197
+348
+265
 x-goal
 -20.0
 1
@@ -454,10 +454,10 @@ x-goal
 Number
 
 INPUTBOX
-292
-269
-350
-329
+294
+275
+348
+352
 y-goal
 -20.0
 1
@@ -465,10 +465,10 @@ y-goal
 Number
 
 PLOT
-22
-348
-280
-468
+21
+372
+279
+492
 Damage
 Time
 Damage
@@ -477,17 +477,17 @@ Damage
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "Damage" 1.0 0 -16777216 true "" "ask robots [ plot damage ]"
 "Maximum" 1.0 0 -7500403 true "" "plot maximum-damage"
 
 PLOT
-21
-472
-281
-592
+20
+496
+280
+616
 Energy
 Time
 Energy
@@ -546,18 +546,35 @@ loss-from-enemies
 NIL
 HORIZONTAL
 
+SLIDER
+23
+320
+285
+353
+threshold-energy-search
+threshold-energy-search
+0
+100
+51.0
+1
+1
+NIL
+HORIZONTAL
+
 @#$#@#$#@
 ## WHAT IS IT?
 
-This is a model which describes a basic survivel algorithm. There is one robot who is our main character. This robot is somewhere and it needs to go somewhere else. The robot both knows its position and the location of the goal is provided as well at any time.
+This is a model which describes a basic survivel algorithm. There is one robot who is our main character. This robot is somewhere and it needs to go somewhere else, the goal. The goal is marked by a white tile. The robot both knows its position and the location of the goal is provided as well at any time.
 
-The robots purpose is to make it to the goal. However, with every step it takes, it loses energy. If there is no energy left at all, the robot cannot move anymore and 'dies'. Luckily, there are some power-stations to add energy to the robot.
+The robots purpose is to make it to the goal. The robot cannot move through obstacles - marked in red - and thus have to move around them. 
 
-Furthermore, the area is inhibited by friends and enemies. The robot gets damaged if it meets an enemy, and recovers from meeting friends. If the robot gets to damaged, it 'dies' as well.
+Moreover, with every step the robot takes, it loses energy. If there is no energy left at all, the robot cannot move anymore and 'dies'. Luckily, there are some powerstations - in green - to add energy to the robot.
+
+Furthermore, the area is inhibited by friends and enemies. The robot gets damaged if it meets an enemy, and recovers from meeting friends. If the robot gets to damaged, it 'dies' as well. Friends have a happy face, enemies look sad.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+Both the enemies and friends move in a random way, the friends with one step at a time and the enemies with 1, 2 or 3 steps at a time. Thus, on average, enemies move slower than friends.
 
 ## HOW TO USE IT
 
@@ -574,18 +591,6 @@ Furthermore, the area is inhibited by friends and enemies. The robot gets damage
 ## EXTENDING THE MODEL
 
 (suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
 @#$#@#$#@
 default
 true

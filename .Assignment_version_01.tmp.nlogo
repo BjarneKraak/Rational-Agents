@@ -185,7 +185,7 @@ to move-to-goal
 end
 
 to set-goal
-  ifelse energy > 50 ;if energy level is higher than 50
+  ifelse energy > threshold-energy-search ;if energy level is higher than threshold set by user
   [;goal is real goal
     set xcor-goal  x-goal
     set ycor-goal  y-goal
@@ -324,7 +324,7 @@ number-of-friends
 number-of-friends
 0
 150
-50.0
+49.0
 1
 1
 NIL
@@ -353,7 +353,7 @@ SLIDER
 number-of-obstacles
 number-of-obstacles
 0
-400
+800
 120.0
 1
 1
@@ -421,10 +421,10 @@ NIL
 HORIZONTAL
 
 INPUTBOX
-289
+292
 47
-349
-107
+352
+117
 x-start
 20.0
 1
@@ -432,10 +432,10 @@ x-start
 Number
 
 INPUTBOX
-289
-118
-354
-178
+293
+125
+351
+188
 y-start
 20.0
 1
@@ -443,10 +443,10 @@ y-start
 Number
 
 INPUTBOX
-290
-192
-353
-252
+293
+197
+348
+265
 x-goal
 -20.0
 1
@@ -454,10 +454,10 @@ x-goal
 Number
 
 INPUTBOX
-292
-269
-350
-329
+294
+275
+348
+352
 y-goal
 -20.0
 1
@@ -465,10 +465,10 @@ y-goal
 Number
 
 PLOT
-22
-348
-280
-468
+21
+372
+279
+492
 Damage
 Time
 Damage
@@ -477,17 +477,17 @@ Damage
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "Damage" 1.0 0 -16777216 true "" "ask robots [ plot damage ]"
 "Maximum" 1.0 0 -7500403 true "" "plot maximum-damage"
 
 PLOT
-21
-472
-281
-592
+20
+496
+280
+616
 Energy
 Time
 Energy
@@ -500,6 +500,7 @@ false
 "" ""
 PENS
 "Energy" 1.0 0 -2674135 true "" "ask robots [plot energy]"
+"pen-1" 1.0 0 -11085214 true "" "ask robots[plot threshold-energy-search]"
 
 SLIDER
 166
@@ -540,7 +541,22 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-17.0
+1.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+23
+320
+285
+353
+threshold-energy-search
+threshold-energy-search
+0
+100
+65.0
 1
 1
 NIL
@@ -559,23 +575,39 @@ Furthermore, the area is inhibited by friends and enemies. The robot gets damage
 
 ## HOW IT WORKS
 
-Both the enemies and friends move in a random way, the friends with one step at a time and the enemies with 1, 2 or 3 steps at a time. Thus, on aver
+Both the enemies and friends move in a random way, the friends with one step at a time and the enemies with 1, 2 or 3 steps at a time. Thus, on average, enemies move faster than friends.
+
+The robot however is way smarter. Based on its own location and the goal's one, it calculates how it has to turn to go in a straight line towards the goal. If it faces an obstacle, it turns away from it and moves in a random direction where there is no obstacle.
+
+When it accidentaly runs into a powerstation, it stays there until it is completed fuelled before it moves on. 
+
+However, when the energy level gets low - the threshold can be set by the user - the robot goes in an active search for a power station. Here is assumed that the robot can look  three patches away in each direction. If it sees a power station, it changes its current goal to the location of that power station and starts moving towards it. When the robot is fuelled again, the goal changes to the real goal again.
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+All parameters are set so the only things that really need to be done are pressing the setup and go button, in that order. You get notified when the robot reaches the goal or dies. 
+
+However it is not necessary, the next things can be altered to create different scenarios:
+  - number of enemies/ friend/ power-stations/ obstacles;
+  - coordinates of goal and start;
+  - inital/ maximum damage;
+  - inital energy and energy gained per step in a power station;
+  - damage done or restored by friends and enemies;
+  - the threshold for actively searching a power station.
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+When you press go, all agents (enemies, friends and the robot) start moving. The properties of the robot can be seen in the two plots. The upper one shows it's current damage-level in black and the maximum damage allowed in grey. The other plot shows the current energy level in red and the threshold for active search in green. You can see that when the energy level gets below the threshold it goes searching for a power station and in practice will often find it quite quickely.
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+The best way to examine the obstacle avoidance and energy-serach algorithms is to increase the number of obstacles to for example 800 and slow down the passing of time by moving the slider in the upper middle of the screen to the left. With so many obstacles, it gets hard to move around and find the right way. As a result of this, finding a power station can be real hard. Therefore increasing the threshold for energy search will enhance it's chances for staying alive (and thus reaching the goal eventually).\
+
+To see how the damage evolves in this model it can be nice to create both 150 enemies and friends, raise the number of obstacles to around 500, set the maximum damage to 40, set the gain-from-friends to 7 and the loss-from-enemies to 10. In this scenario, it is not predetermined if the robot is going to make it to it's goal. 
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+As suggested to try, it is clear that in a scenario with many enemies, the chances of the robot to survive decreases. An similar algorithm used for finding a  
 @#$#@#$#@
 default
 true
