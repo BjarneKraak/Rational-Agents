@@ -4,6 +4,7 @@ breed [friends friend]
 
 robots-own [damage               ;; robot gets a degree of damage and a level of energy
             energy
+            orientation
            ]
 
 to setup
@@ -84,7 +85,6 @@ to lose-energy
     set energy energy - 1; robots lose energy
     if energy <=  1 [
       user-message "Robot has no energy left";
-      stop
       die
     ]
   ]
@@ -94,7 +94,6 @@ to check-death
   ask robots [
     if damage >= maximum-damage [
       user-message "Robot destroyed"
-
       die
      ]
   ]
@@ -117,6 +116,9 @@ to meet-friends
     if person != nobody [ ; if there's at least one friend
       ;show person
       set damage damage - gain-from-friends; meeting friends helps you recover
+      if damage < 0 [
+        set damage 0
+      ]
     ]
   ]
 end
@@ -137,10 +139,29 @@ end
 
 to move-robots
   ask robots [
-    right random 360                        ;; friends move in a random direction 1 step forward
-    forward 2
+    ; move 1 forward and find orientation
+    let last-x xcor
+    let last-y ycor
+    forward 1
+    let new-x xcor
+    let new-y ycor
+    let dif-x new-x - last-x
+    let dif-y new-y - last-y
+    if dif-x > 0 [set orientation atan dif-x dif-y ]
+    let dif-x2 x-goal - xcor
+    let dif-y2 y-goal - ycor
+
+
+    rotate-to-orientation 45
   ]
 
+end
+
+to rotate-to-orientation [wanted-orientation]
+  ask robots [
+    right wanted-orientation - orientation
+    set orientation wanted-orientation
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -288,7 +309,7 @@ initial-damage
 initial-damage
 0
 100
-49.0
+0.0
 1
 1
 NIL
@@ -429,7 +450,7 @@ gain-from-friends
 gain-from-friends
 1
 20
-1.0
+20.0
 1
 1
 NIL
