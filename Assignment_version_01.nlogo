@@ -82,8 +82,8 @@ end
 
 to lose-energy
   ask robots [
-    set energy energy - 1; robots lose energy
-    if energy <=  1 [
+    set energy energy - 2; robots lose energy
+    if energy <=  0 [
       user-message "Robot has no energy left";
       die
     ]
@@ -139,25 +139,31 @@ end
 
 to move-robots
   ask robots [
-    ; move 1 forward and find orientation
-    let last-x xcor
-    let last-y ycor
-    forward 1
-    let new-x xcor
-    let new-y ycor
-    let dif-x new-x - last-x
-    let dif-y new-y - last-y
-    if dif-x > 0 [set orientation atan dif-x dif-y ]
+    ifelse pcolor = green and energy < 100
+    [
+      ;wait
+    ]
+    [
+      ; move 1 forward and find orientation
+      let last-x xcor
+      let last-y ycor
+      forward 1
+      let new-x xcor
+      let new-y ycor
+      let dif-x new-x - last-x
+      let dif-y new-y - last-y
+      if dif-x > 0 [set orientation atan dif-x dif-y ]
 
-    ;avoid obstacles:
-    avoid-obstacles
+      ;avoid obstacles:
+      avoid-obstacles
 
-    let dif-x2 x-goal - xcor
-    let dif-y2 y-goal - ycor
-    let angle atan dif-x2 dif-y2
-    show angle
+      let dif-x2 x-goal - xcor
+      let dif-y2 y-goal - ycor
+      let angle atan dif-x2 dif-y2
+      show angle
 
-    rotate-to-orientation angle;
+      rotate-to-orientation angle;
+    ]
   ]
 
 end
@@ -179,6 +185,7 @@ to avoid-obstacles
     left 90
     avoid-obstacles
     ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 482
@@ -250,7 +257,7 @@ number-of-enemies
 number-of-enemies
 0
 50
-25.0
+50.0
 1
 1
 NIL
@@ -310,7 +317,7 @@ initial-energy
 initial-energy
 0
 200
-200.0
+42.0
 1
 1
 NIL
@@ -355,7 +362,7 @@ robot-size
 robot-size
 2
 15
-4.0
+2.0
 1
 1
 NIL
@@ -367,7 +374,7 @@ INPUTBOX
 349
 107
 x-start
--20.0
+15.0
 1
 0
 Number
@@ -378,7 +385,7 @@ INPUTBOX
 354
 178
 y-start
--20.0
+15.0
 1
 0
 Number
@@ -389,7 +396,7 @@ INPUTBOX
 353
 252
 x-goal
-20.0
+-20.0
 1
 0
 Number
@@ -400,7 +407,7 @@ INPUTBOX
 350
 329
 y-goal
-20.0
+-13.0
 1
 0
 Number
@@ -451,7 +458,7 @@ gain-from-power-station
 gain-from-power-station
 1
 40
-29.0
+5.0
 1
 1
 NIL
@@ -481,7 +488,7 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-8.0
+14.0
 1
 1
 NIL
