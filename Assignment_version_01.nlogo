@@ -1,86 +1,113 @@
+;there are three breeds of turtles: enemies, friends and robots
 breed [enemies enemy]
 breed [robots robot]
 breed [friends friend]
 
-robots-own [damage               ;; robot gets a degree of damage and a level of energy
-            energy
-            orientation
-            xcor-goal
-            ycor-goal
-           ]
+robots-own
+[
+  damage ;robots gets damaged by meeting enemies, it heals by meeting friends
+  energy ;robots loses energy by moving, it gains energy by entering a power station
+  orientation ;orientation of robot: 0 is up, 90 if right etc
+  xcor-goal ;x coordinate of goal, which can be the real goal or a power station
+  ycor-goal ;y coordinate of goal, which can be the real goal or a power station
+]
 
-to setup
-  clear-all
-  setup-patches
-  setup-turtles
-  reset-ticks
-  ;user-message "The field is set-up" ;;message is annoying
+to setup ;runs once when button is pressed
+  clear-all ;clear field
+  setup-patches ;creat all pathces needed
+  setup-turtles ;create all turtles aka enemies, friends and the robot
+  reset-ticks ; let time begin
+  user-message "The field is set-up" ; give user a message
 end
 
-
-to go
-  move-turtles
-  lose-energy
-  meet-enemies
-  meet-friends
-  check-for-power-stations
-  check-for-goal
-  check-death
-  tick
-
+to go ; runs continiously when button is pressed
+  move-turtles ;move all turtles
+  meet-enemies ;check if the robot meets enemies
+  meet-friends ;check if the roboto meets friends
+  check-for-power-stations ;check if robot is on a power station
+  check-for-goal ;check if the robot reached the goal
+  check-death ;check if the robot should 'die'
+  tick ; let time pass
 end
 
+to setup-turtles ;create all turtles and give them their properties
+  create-enemies number-of-enemies  ;create as many enemies as specified by the user
+  [
+    set color orange ; make the enemies orange
+    setxy random-xcor random-ycor ;place all enemies on random coordinates
+  ]
 
+  create-robots 1 ;create one robot
+  [
+    set color grey ;make the robot grey
+    set size robot-size ;give the robot the size specified by the user
+    set damage initial-damage ;give the robot the initial damage specified by the user
+    setxy x-start y-start ;place the robot at the coordinates specified by the user
+    set energy initial-energy ;give the robot its initial energy specified by the user
+  ]
 
-to setup-turtles
-  create-enemies number-of-enemies  [set color orange            ;; uses the numberEnemies slider, makes the enemies orange and distributes them randomly
-                      setxy random-xcor random-ycor
-                      ]
-  create-robots 1    [set color grey                         ;; there is only one robot needed, which is twice the size of the other agents
-                      set size robot-size
-                      set damage initial-damage
-                      setxy x-start y-start                         ;; the robot starts at a point in the left top corner a bit from the sides
-                      set energy initial-energy              ;; the initial energy is not enough to reach the goal and set by a slider
-                      ]
-  create-friends number-of-friends  [set color yellow            ;; friends are yellow and distributed randomly, the amount is set by the slider
-                      setxy random-xcor random-ycor
-                      ]
-  set-default-shape  enemies "face sad"                      ;; using default shapes to display the agents
+  create-friends number-of-friends ;create as many friends as specified by the user
+  [
+    set color yellow  ;make friends yellow
+    setxy random-xcor random-ycor ;place all enemies on random coordinates
+  ]
+  ;give all breeds their shape:
+  set-default-shape  enemies "face sad"
   set-default-shape friends "face happy"
-  set-default-shape robots "robot"                        ;; using a customized shape
+  set-default-shape robots "robot"
 
 end
 
-to setup-patches
-  ask patches [set pcolor black]                                  ;; general patches are black
-  ask n-of number-of-obstacles patches [set pcolor red]               ;; slider sets amount of obstacles randomly distributed with red color
-  ask n-of number-of-power-stations patches [set pcolor green]         ;; slider sets amount of power stations randomly distributed with green color
-  ask patch x-goal y-goal  [set pcolor white]                               ;; create a target with a white color
+to setup-patches ;setup all patches
+  ask patches [set pcolor black] ; general patches are black
+  ask n-of number-of-obstacles patches [set pcolor red] ; slider sets amount of obstacles randomly distributed with red color
+  ask n-of number-of-power-stations patches [set pcolor green] ; slider sets amount of power stations randomly distributed with green color
+  ask patch x-goal y-goal  [set pcolor white] ; create a target with a white color
 end
 
-to move-turtles
+to move-turtles ;move all turtles with separate functions
   move-enemies
   move-friends
   move-robots
 end
 
+to meet-enemies
+  ask robots[
+    let person one-of enemies-here ;check if there are enemies on location of robot
+    if person != nobody [ ;if theres at least one enemy
+      set damage damage + loss-from-enemies; increase the damage of robot by amount specified by user
+    ]
+  ]
+end
+
+to meet-friends
+  ask robots[
+    let person one-of friends-here ;check if there are friends on location of robot
+    if person != nobody [ ; if there's at least one friend
+      set damage damage - gain-from-friends; decrease the damage of robot by amount specified by user
+      if damage < 0 [ ; make sure the damage can not get below zero
+        set damage 0
+      ]
+    ]
+  ]
+end
+
 to check-for-power-stations
   ask robots[
-    if pcolor = green [
-      set energy energy + gain-from-power-station
-      if energy > 100
+    if pcolor = green [ ;check if robot is on power station
+      set energy energy + gain-from-power-station ;increase energy level by amount specified by user
+      if energy > 100 ;make sure the energy level can not get greater than 100
       [
         set energy 100
       ]
-      ;show "add fuel"
     ]
   ]
 end
 
 to check-for-goal
   ask robots[
-    if pcolor = white [
-      user-message "robot arrived at goal"
+    if pcolor = white [ ;check if the robot is on the goal
+      user-message "The robot arrived at the goal" ;tell the user the robot is on the goal
       stop
     ]
   ]
@@ -88,121 +115,99 @@ end
 
 to lose-energy
   ask robots [
-    set energy energy - 2; robots lose energy
-    if energy <=  0 [
-      user-message "Robot has no energy left";
-      die
-    ]
+    set energy energy - 1; robots lose energy by moving
   ]
 end
 
-to check-death
+to check-death ;a robot can 'die' in two ways, by getting to damaged or by having no energy left
   ask robots [
-    if damage >= maximum-damage [
-      user-message "Robot destroyed"
+    if damage >= maximum-damage [ ;if damage is greater than amount specified by user, the robot dies
+      user-message "Robot is too damaged: it died" ;send message to user
       die
-     ]
-  ]
-end
-
-
-to meet-enemies
-  ask robots[
-    let person one-of enemies-here
-    if person != nobody [ ;if theres at least one enemy
-      ;show person
-      set damage damage + loss-from-enemies; meeting enemies hurts you
     ]
-  ]
-end
-
-to meet-friends
-  ask robots[
-    let person one-of friends-here
-    if person != nobody [ ; if there's at least one friend
-      ;show person
-      set damage damage - gain-from-friends; meeting friends helps you recover
-      if damage < 0 [
-        set damage 0
-      ]
+    if energy <=  0 [ ;if the energy gets below 1, the robot can't move any more
+      user-message "Robot has no energy left: it died" ;send message to user
+      die
     ]
   ]
 end
 
 to move-enemies
-  ask enemies [                             ;; enemies move in a random direction either 1,2 or 3 steps forward
-    right random 360
-    let temp one-of [1 2 3]
-    forward temp
-    if pcolor = red
+  ask enemies
+  [
+    right random 360 ;turn a random direction
+    let temp one-of [1 2 3] ;get a number (1 2 or 3)
+    forward temp ; move that amount forard
+    if pcolor = red ;check if enemy moved on top of obstacle
     [ ;if moved on top of obstacle, move back
       right 180 ;turn 180 degrees
       forward temp ; go back
-      right 180 ; turn to normal pos
+      right 180 ; turn to normal orientation
     ]
-    ;move-enemies
   ]
 end
 
 to move-friends
-  ask friends [
-    right random 360                        ;; friends move in a random direction 1 step forward
-    forward 1
+  ask friends
+  [
+    right random 360 ;turn a random direction
+    forward 1 ;move one step forward
     if pcolor = red [ ;if moved on top of obstacle, move back
       right 180 ;turn 180 degrees
       forward 1 ; go back
       right 180 ; turn to normal pos
     ]
-    ;move-friends
   ]
 end
 
 to move-robots
   ask robots [
-    ifelse pcolor = green and energy < 100
+    ifelse pcolor = green and energy < 100 ;check if robot is on a power station and the energy level is below 100
     [ ]; wait and get fueled
-    [move-to-goal]
+    [move-to-goal] ; otherwise move to the goal specified at the moment
   ]
 
 end
 
+to move-to-goal
+  set-goal ;set goal depending on energy level
+
+  move-and-find-orientation ; move 1 forward and find orientation
+  avoid-obstacles ;avoid obstacles:
+  lose-energy ;lose energy by moving
+
+  ;find angle to come to the goal specified
+  let dif-x2 xcor-goal - xcor
+  let dif-y2 ycor-goal - ycor
+  let angle atan dif-x2 dif-y2
+
+  rotate-to-orientation angle ;rotate robot towards the goal
+end
+
 to set-goal
-  ifelse energy > 75
-  [
+  ifelse energy > 50 ;if energy level is higher than 50
+  [;goal is real goal
     set xcor-goal  x-goal
     set ycor-goal  y-goal
   ]
-  [
-    ask patches at-points [[1 0] [0 1] [-1 0] [0 -1] [1 1] [-1 -1] [1 -1] [-1 1] ] with [pcolor = green] ;find powerstations around the robot
-   [
-    let m1 pxcor
-    let m2 pycor
+  [;if energy level is below 50, search for nearby powerstations and set that as the goal
+    ask patches in-radius 3 with [pcolor = green] ; find powerstations within a radius of 3 patches
+    [ ;save coordinates of power station
+      let x-temp pxcor
+      let y-temp pycor
       ask robots
-      [
-        set xcor-goal m1
-        set ycor-goal m2
+      [ ;send goal coordinates to coordinates of power station found, if any
+        set xcor-goal x-temp
+        set ycor-goal y-temp
       ]
     ]
   ]
 end
 
-to move-to-goal
-  set-goal
-
-  move-and-find-orientation ; move 1 forward and find orientation
-  avoid-obstacles ;avoid obstacles:
-
-  let dif-x2 xcor-goal - xcor
-  let dif-y2 ycor-goal - ycor
-  let angle atan dif-x2 dif-y2
-
-  rotate-to-orientation angle;
-end
-
-to rotate-to-orientation [wanted-orientation]
+to rotate-to-orientation [wanted-orientation] ;rotate to angle wanted, depending on current orientation
   ask robots [
-    right wanted-orientation - orientation
-    set orientation wanted-orientation
+    right wanted-orientation - orientation ;turn
+    set orientation wanted-orientation ;save new orientation
   ]
 end
 
@@ -211,21 +216,26 @@ to avoid-obstacles
     right 180 ;turn 180 degrees
     forward 1 ; go back
     right 180 ; turn to normal pos
-    right 90 ; turn to right
-    forward 1
-    left 90
-    ;avoid-obstacles
-    ]
+    let temp one-of [90 90 45 180 270 300 14] ; choose a random angle, random to make sure it does not get stuck in a loop
+    right temp ; turn the random angle
+    forward 1 ;move forward
+    set orientation orientation + temp ; save new orientation
+    avoid-obstacles ;make sure robot is not again on a obstacle, if it is do it again
+  ]
 end
 
 to move-and-find-orientation
+  ;save coordinates
   let last-x xcor
   let last-y ycor
-  forward 1
+  forward 1 ;move 1 forward
+  ;save new coordinates
   let new-x xcor
   let new-y ycor
+  ;calculate the difference
   let dif-x new-x - last-x
   let dif-y new-y - last-y
+  ;calculate orientation and save it
   if dif-x > 0 [set orientation atan dif-x dif-y ]
 end
 @#$#@#$#@
@@ -299,7 +309,7 @@ number-of-enemies
 number-of-enemies
 0
 150
-150.0
+50.0
 1
 1
 NIL
@@ -314,7 +324,7 @@ number-of-friends
 number-of-friends
 0
 150
-14.0
+50.0
 1
 1
 NIL
@@ -329,7 +339,7 @@ number-of-power-stations
 number-of-power-stations
 0
 100
-67.0
+60.0
 1
 1
 NIL
@@ -343,8 +353,8 @@ SLIDER
 number-of-obstacles
 number-of-obstacles
 0
-80
-80.0
+400
+120.0
 1
 1
 NIL
@@ -359,7 +369,7 @@ initial-energy
 initial-energy
 0
 100
-78.0
+40.0
 1
 1
 NIL
@@ -388,8 +398,8 @@ SLIDER
 maximum-damage
 maximum-damage
 0
-100
-100.0
+50
+20.0
 1
 1
 NIL
@@ -416,7 +426,7 @@ INPUTBOX
 349
 107
 x-start
-15.0
+20.0
 1
 0
 Number
@@ -427,7 +437,7 @@ INPUTBOX
 354
 178
 y-start
-15.0
+20.0
 1
 0
 Number
@@ -449,7 +459,7 @@ INPUTBOX
 350
 329
 y-goal
--13.0
+-20.0
 1
 0
 Number
@@ -500,7 +510,7 @@ gain-from-power-station
 gain-from-power-station
 1
 40
-12.0
+40.0
 1
 1
 NIL
@@ -530,7 +540,7 @@ loss-from-enemies
 loss-from-enemies
 1
 20
-18.0
+17.0
 1
 1
 NIL
@@ -539,7 +549,11 @@ HORIZONTAL
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is a model which describes a basic survivel algorithm. There is one robot who is our main character. This robot is somewhere and it needs to go somewhere else. The robot both knows its position and the location of the goal is provided as well at any time.
+
+The robots purpose is to make it to the goal. However, with every step it takes, it loses energy. If there is no energy left at all, the robot cannot move anymore and 'dies'. Luckily, there are some power-stations to add energy to the robot.
+
+Furthermore, the area is inhibited by friends and enemies. The robot gets damaged if it meets an enemy, and recovers from meeting friends. If the robot gets to damaged, it 'dies' as well.
 
 ## HOW IT WORKS
 
